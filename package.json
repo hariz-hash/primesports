@@ -1,0 +1,25 @@
+{
+  "name": "primesports",
+  "version": "1.0.0",
+  "description": "To start mysql, in the terminal, type in `mysql -u root`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hariz-hash/primesports.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hariz-hash/primesports/issues"
+  },
+  "homepage": "https://github.com/hariz-hash/primesports#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "hbs": "^4.2.0",
+    "wax-on": "^1.2.2"
+  }
+}
