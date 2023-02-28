@@ -1,5 +1,33 @@
 {{#extends 'base'}}
 {{#block 'content'}}
-<h1>IN product</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Cost</th>
+            <th>Description</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        {{#each shoes}}
+            <tr>
+                <td>
+                    {{this.id}}
+                </td>
+                <td>
+                    {{this.name}}
+                </td>
+                <td>
+                    {{this.cost}}
+                </td>
+                <td>
+                    {{this.description}}
+                </td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
 {{/block}}
 {{/extends}}
