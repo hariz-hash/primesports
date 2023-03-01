@@ -137,5 +137,97 @@ const createProductForm = (brands, genders, colors, size, materials = []) => { /
     })
 };
 
+const createSearchForm = (brands, genders, colors, size, materials = []) => 
+{
+    return forms.create({
+        'name': fields.string({
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+        }),
+        'description': fields.string({
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+        }),
+        'shoe_type': fields.string({
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+        }),
+        'brand_id': fields.string({
+            label: 'Brands',
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: brands
+        }),
+        'gender_id': fields.string({
+            label: 'Gender',
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: genders
+        }),
+        'color_id': fields.string({
+            label: 'Color',
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: colors
+        }),
+        'size_id': fields.string({
+            label: 'size',
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: size
+        }),
+        'materials': fields.string({
+            // required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.multipleSelect(),
+            choices: materials
+        }),
 
-module.exports = { createProductForm, bootstrapField };
+        //new entry
+        // 'cost': fields.number({
+        //     label: 'Cost',
+        //     required: true,
+        //     errorAfterField: true,
+        //     validators: [validators.integer(), validators.min(0)]
+        // }),
+        // 'stock': fields.number({
+        //     label: 'Stock',
+        //     required: true,
+        //     errorAfterField: true,
+        //     validators: [validators.integer(), validators.min(0)]
+        // }),
+
+    })
+
+}
+
+
+module.exports = { createProductForm, bootstrapField, createSearchForm };
