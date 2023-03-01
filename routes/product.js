@@ -104,6 +104,9 @@ router.get('/create', async (req, res) => {
 
     res.render("products/create", { //based on the folder "products" into create hbs
         'form': productForm.toHTML(bootstrapField),
+        'cloudinaryName': process.env.CLOUDINARY_NAME,
+        'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+        'cloudinaryPreset': process.env.CLOUDINARY_UPLOAD_PRESETs
         //here we convert caolon form with the pass in data
         // into html form where the hbs will display them
     })
@@ -186,8 +189,10 @@ router.get('/:product_id/update', async (req, res) => {
 
     res.render("products/update", { //based on the folder "products" into create hbs
         'form': productForm.toHTML(bootstrapField),
-        'shoe': shoeById.toJSON()
-
+        'shoe': shoeById.toJSON(),
+        'cloudinaryName': process.env.CLOUDINARY_NAME,
+        'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+        'cloudinaryPreset': process.env.CLOUDINARY_UPLOAD_PRESET
     })
 
 

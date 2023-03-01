@@ -21,6 +21,8 @@
             <th>Size</th>
             <th>Materials</th>
             <th>Description</th>
+            <th>Image</th>
+            <th>Edit</th>
         </tr>
 
     </thead>
@@ -30,7 +32,7 @@
             <td>
                 {{this.id}}
             </td>
-             <td>
+            <td>
                 {{this.shoe_type}}
             </td>
             <td>
@@ -55,12 +57,17 @@
                 {{this.size.size}}
             </td>
             <td>
+                {{this.description}}
+            </td>
+            <td>
                 {{#each this.materials}}
                 <span class="badge bg-primary">{{this.materials}}</span>
                 {{/each}}
             </td>
+
             <td>
-                {{this.description}}
+                {{!-- <img src='{{this.image_url}}' alt='shoe image' /> --}}
+                <img src='{{this.thumbnail_url}}' alt='shoe image' />
             </td>
             <td>
                 <a href="/products/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
