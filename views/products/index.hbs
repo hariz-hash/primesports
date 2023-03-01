@@ -1,10 +1,18 @@
 {{#extends 'base'}}
 {{#block 'content'}}
+<form method="GET">
+    {{{form}}}
+    <a href="/products" class="btn btn-secondary mx-1">Reset</a>
+
+    <input type="submit" class="mb-3 mt-3 btn btn-primary" value="Search" />
+</form>
+<h1>Products</h1>
 <table class="table">
     <thead>
         <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>ShoeType</th>
             <th>Cost</th>
             <th>Stock</th>
             <th>Brand</th>
@@ -12,7 +20,6 @@
             <th>Colour</th>
             <th>Size</th>
             <th>Materials</th>
-
             <th>Description</th>
         </tr>
 
@@ -22,6 +29,9 @@
         <tr>
             <td>
                 {{this.id}}
+            </td>
+             <td>
+                {{this.shoe_type}}
             </td>
             <td>
                 {{this.name}}
@@ -61,5 +71,8 @@
         {{/each}}
     </tbody>
 </table>
+<br>
+<a href="/products/create" class="btn btn-danger btn-sm">Add new products</a>
+
 {{/block}}
 {{/extends}}

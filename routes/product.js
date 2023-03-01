@@ -2,24 +2,86 @@ const express = require("express");
 const async = require("hbs/lib/async");
 const router = express.Router();
 const { Shoe, Brand, Gender, Color, Size, Material } = require('../models')
-const { bootstrapField, createProductForm } = require('../forms');
+const { bootstrapField, createProductForm, createSearchForm } = require('../forms');
 const dataLayer = require('../dal/products')
 //all of this will route out to render out hbs
 //either by using get / post and with an extended url example: /create
 
 
 router.get('/', async (req, res) => {
-    //fetch all products = SELECT * FROM PRODUCTS
-    // let shoes = await dataLayer.fetchAllShoes();
-    // let q = Shoe.collection()
-    // let shoes = await q.fetch({
-    //     withRelated: ['brand','color','size','gender', 'materials']
-    // })
+
+    const allBrands = await dataLayer.getBrands();
+    const allGenders = await dataLayer.getGenders();
+    const allColor = await dataLayer.getColors();
+    const allSize = await dataLayer.getSizes();
+    const allMaterials = await dataLayer.getAllMaterials();
     let shoes = await dataLayer.fetchWithRelatedShoes();
-    res.render("products/index",
-        {
-            'shoes': shoes.toJSON()
-        })//look into product folder and find index
+
+    allBrands.unshift([0, '--- Any Brand ---']);
+    allGenders.unshift([0, '--- Any Gender ---']);
+    allColor.unshift([0, '--- Any color ---']);
+    allSize.unshift([0, '--- Any size ---']);
+
+    const searchForm = createSearchForm(allBrands, allGenders, allColor, allSize, allMaterials);
+    let q = Shoe.collection()
+
+    searchForm.handle(req,{
+        'success': async (form) => {
+            if (form.data.model) {
+                q.where('name', 'like', '%' + form.data.model + '%')
+            }
+            if (form.data.shoe_type) {
+                q.where('shoe_type', 'like', '%' + form.data.shoe_type + '%')
+            }
+            if (form.data.brand_id && form.data.brand_id !== "0") {
+                q.where('brand_id', '=', form.data.brand_id)
+            }
+            if (form.data.gender_id && form.data.gender_id !== "0") {
+                q.where('gender_id', '=', form.data.gender_id)
+            }
+            if (form.data.color_id && form.data.color_id !== "0") {
+                q.where('color_id', '=', form.data.color_id)
+            }
+            if (form.data.size_id && form.data.size_id !== "0") {
+                q.where('size_id', '=', form.data.size_id)
+            }
+            if (form.data.materials) {
+                // ...JOIN products_tags ON products.id = products_tags.product_id
+                q.query('join', 'materials_shoes', 'shoes.id', 'shoe_id')
+                    .where('material_id', 'in', form.data.materials.split(','))
+            }
+            
+            const products = await q.fetch({
+                withRelated: ['brand', 'color', 'size', 'gender', 'materials'] // for each product, load in each of the tag
+            });
+            res.render('products/index', {
+                'shoes': products.toJSON(),
+                'form': form.toHTML(bootstrapField)
+            })
+
+        },
+        'empty': async (form) => {
+            // let shoes = await q.fetch({
+            //     withRelated: ['brand', 'gender', 'materials']
+            // })
+            res.render('products/index', {
+                'shoes': shoes.toJSON(),
+                'form': searchForm.toHTML(bootstrapField)
+            })
+        },
+        'error': async (form) => {
+    
+            res.render('products/index', {
+                'shoes': shoes.toJSON(),
+                'form': form.toHTML(bootstrapField)
+            })
+        },
+createSearchForm
+    })
+    // res.render("products/index",
+    //     {
+    //         'shoes': shoes.toJSON() //to loop and display in a table format on hbs
+    //     })//look into product folder and find index
 })
 
 //based on the associated url which is https:xxxxx/product/add
@@ -67,8 +129,8 @@ router.post('/create', async (req, res) => {
                 await product.materials().attach(materials.split(","));
                 console.log(materials.split(","))
             }
-            // req.flash("success_messages", `New Product ${product.get('model')} has been created`)
-            res.redirect('/products')//where does this url comes from 
+            req.flash("success_messages", `New Product ${product.get('name')} has been created`)
+            res.redirect('/products')
         },
         'empty': async function (form) {
             // executed if the user just submit without any input
