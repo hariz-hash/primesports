@@ -28,7 +28,7 @@ var bootstrapField = function (name, object) {
 
 const createProductForm = (brands, genders, colors, size, materials = []) => { // add materials
     return forms.create({
-        'model': fields.string({
+        'name': fields.string({
             required: true,
             errorAfterField: true,
             cssClasses: {
@@ -72,6 +72,26 @@ const createProductForm = (brands, genders, colors, size, materials = []) => { /
             widget: widgets.select(),
             choices: genders
         }),
+        'color_id': fields.string({
+            label: 'Color',
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: colors
+        }),
+        'size_id': fields.string({
+            label: 'size',
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            widget: widgets.select(),
+            choices: size
+        }),
         'materials': fields.string({
             required: true,
             errorAfterField: true,
@@ -113,26 +133,7 @@ const createProductForm = (brands, genders, colors, size, materials = []) => { /
             errorAfterField: true,
             validators: [validators.integer(), validators.min(0)]
         }),
-        'color_id': fields.string({
-            label: 'Color',
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            },
-            widget: widgets.select(),
-            choices: colors
-        }),
-        'size_id': fields.string({
-            label: 'size',
-            required: true,
-            errorAfterField: true,
-            cssClasses: {
-                label: ['form-label']
-            },
-            widget: widgets.select(),
-            choices: size
-        }),
+
     })
 };
 

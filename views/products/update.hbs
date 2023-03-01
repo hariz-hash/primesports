@@ -1,5 +1,21 @@
 {{#extends 'base'}}
 {{#block 'content'}}
 <h1>Update</h1>
+<form method="POST">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+    {{{form}}}
+    <div>
+        <a href="#" id="upload_widget" class="btn btn-primary">Upload Image</a>
+    </div>
+    <div>
+        {{#if product.thumbnail_url}}
+        <img src="{{product.thumbnail_url}}" id="uploaded_image" />
+        {{else}}
+        <img src="" id="uploaded_image" style="display:none" /> lol
+        {{/if}}
+    </div>
+    <input type="submit" class="btn btn-primary mt-3" />
+
+</form>
 {{/block}}
 {{/extends}}

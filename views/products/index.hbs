@@ -6,26 +6,58 @@
             <th>ID</th>
             <th>Name</th>
             <th>Cost</th>
+            <th>Stock</th>
+            <th>Brand</th>
+            <th>Gender</th>
+            <th>Colour</th>
+            <th>Size</th>
+            <th>Materials</th>
+
             <th>Description</th>
         </tr>
 
     </thead>
     <tbody>
         {{#each shoes}}
-            <tr>
-                <td>
-                    {{this.id}}
-                </td>
-                <td>
-                    {{this.name}}
-                </td>
-                <td>
-                    {{this.cost}}
-                </td>
-                <td>
-                    {{this.description}}
-                </td>
-            </tr>
+        <tr>
+            <td>
+                {{this.id}}
+            </td>
+            <td>
+                {{this.name}}
+            </td>
+            <td>
+                {{this.cost}}
+            </td>
+            <td>
+                {{this.stock}}
+            </td>
+            <td>
+                {{this.brand.brand}}
+            </td>
+            <td>
+                {{this.color.color}}
+            </td>
+            <td>
+                {{this.gender.gender}}
+            </td>
+            <td>
+                {{this.size.size}}
+            </td>
+            <td>
+                {{#each this.materials}}
+                <span class="badge bg-primary">{{this.materials}}</span>
+                {{/each}}
+            </td>
+            <td>
+                {{this.description}}
+            </td>
+            <td>
+                <a href="/products/{{this.id}}/update" class="btn btn-primary btn-sm">Update</a>
+                <a href="/products/{{this.id}}/delete" class="btn btn-danger btn-sm">Delete</a>
+
+            </td>
+        </tr>
         {{/each}}
     </tbody>
 </table>

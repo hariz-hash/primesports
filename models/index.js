@@ -1,6 +1,6 @@
 const bookshelf = require('../bookshelf')
 
-const Sport = bookshelf.model('Sports',
+const Shoe = bookshelf.model('Shoe',
 {
     tableName:'shoes',
     brand() {
@@ -16,44 +16,44 @@ const Sport = bookshelf.model('Sports',
         return this.belongsTo('Size')
     },
     materials() {
-        return this.belongsToMany('Material', "materials_shoes", "shoe_id");
+        return this.belongsToMany("Material", "materials_shoes", "shoe_id")
     }
 })
 
 const Brand = bookshelf.model('Brand', {
     tableName: "brands",
-    sports() {
-        return this.hasMany('Sports')
+    shoes() {
+        return this.hasMany('Shoe')
     }
 });
 
 const Gender = bookshelf.model("Gender", {
     tableName: "genders",
-    sports() {
-        return this.hasMany('Sports')
+    shoes() {
+        return this.hasMany('Shoe')
     }
 })
 
 const Color = bookshelf.model("Color", {
     tableName: "colors",
-    sports() {
-        return this.hasMany('Sports')
+    shoes() {
+        return this.hasMany('Shoe')
     }
 })
 
 const Size = bookshelf.model("Size", {
     tableName: "sizes",
-    sports() {
-        return this.hasMany('Sports')
+    shoes() {
+        return this.hasMany('Shoe')
     }
 
 })
 
 const Material = bookshelf.model('Material', {
     tableName: 'materials',
-    sports() {
-        return this.belongsToMany('Sports');
+    shoes() {
+        return this.belongsToMany('Shoe', 'materials_shoes', 'material_id');
     }
 });
 
-module.exports = { Sport, Brand, Gender, Color, Size, Material };
+module.exports = { Shoe, Brand, Gender, Color, Size, Material };

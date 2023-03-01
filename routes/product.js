@@ -1,13 +1,21 @@
 const express = require("express");
 const async = require("hbs/lib/async");
 const router = express.Router();
-const { Sport, Brand, Gender, Color, Size, Material } = require('../models')
+const { Shoe, Brand, Gender, Color, Size, Material } = require('../models')
 const { bootstrapField, createProductForm } = require('../forms');
+const dataLayer = require('../dal/products')
 //all of this will route out to render out hbs
 //either by using get / post and with an extended url example: /create
+
+
 router.get('/', async (req, res) => {
     //fetch all products = SELECT * FROM PRODUCTS
-    let shoes = await Sports.collection().fetch()
+    // let shoes = await dataLayer.fetchAllShoes();
+    // let q = Shoe.collection()
+    // let shoes = await q.fetch({
+    //     withRelated: ['brand','color','size','gender', 'materials']
+    // })
+    let shoes = await dataLayer.fetchWithRelatedShoes();
     res.render("products/index",
         {
             'shoes': shoes.toJSON()
@@ -15,37 +23,181 @@ router.get('/', async (req, res) => {
 })
 
 //based on the associated url which is https:xxxxx/product/add
+
+//CREATE
 router.get('/create', async (req, res) => {
-    const brands = await Brand.fetchAll().map((each) => {
-        return [each.get('id'), each.get('brand')]
-    })
-    const genders = await Gender.fetchAll().map((each) => {
-        return [each.get('id'), each.get('gender')]
 
-    })
-    const color = await Color.fetchAll().map((each) => {
-        return [each.get('id'), each.get('color')]
-    })
-    const size = await Size.fetchAll().map((each) => {
-        return [each.get('id'), each.get('size')]
-    })
-    const materials = await Material.fetchAll().map((each) => {
-        return [each.get('id'), each.get('materials')]
+    //here we will get all the data from the tables
+    const allBrands = await dataLayer.getBrands();
+    const allGenders = await dataLayer.getGenders();
+    const allColor = await dataLayer.getColors();
+    const allSize = await dataLayer.getSizes();
+    const allMaterials = await dataLayer.getAllMaterials();
 
-    })
-    const productForm = createProductForm(brands, genders, color, size, materials);
 
-    res.render("products/create",{
+    // here we will call the caolon form to take the pass-in arguments and store in the
+    //widgets,
+    //the productForm will consist the the retur form to that variable
+    const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
+
+    res.render("products/create", { //based on the folder "products" into create hbs
         'form': productForm.toHTML(bootstrapField),
-
-    })//based on the folder "products" into create hbs
+        //here we convert caolon form with the pass in data
+        // into html form where the hbs will display them
+    })
 })
+
+router.post('/create', async (req, res) => {
+
+    const allBrands = await dataLayer.getBrands();
+    const allGenders = await dataLayer.getGenders();
+    const allColor = await dataLayer.getColors();
+    const allSize = await dataLayer.getSizes();
+    const allMaterials = await dataLayer.getAllMaterials();
+
+    const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
+
+    productForm.handle(req, {
+        success: async (form) => {
+            let { materials, ...productData } = form.data;
+            const product = new Shoe();
+            console.log(materials)
+            await product.save(productData);
+            if (materials) {
+                await product.materials().attach(materials.split(","));
+                console.log(materials.split(","))
+            }
+            // req.flash("success_messages", `New Product ${product.get('model')} has been created`)
+            res.redirect('/products')//where does this url comes from 
+        },
+        'empty': async function (form) {
+            // executed if the user just submit without any input
+            res.render('products/create', {
+                'form': form.toHTML(bootstrapField),
+                // "cloudinaryName": process.env.CLOUDINARY_NAME,
+                // "cloudinaryApiKey": process.env.CLOUDINARY_API_KEY,
+                // "cloudinaryPreset": process.env.CLOUDINARY_UPLOAD_PRESET
+            })
+        },
+        'error': async (form) => {
+            res.render('products/create', {
+                'form': form.toHTML(bootstrapField),
+                // "cloudinaryName": process.env.CLOUDINARY_NAME,
+                // "cloudinaryApiKey": process.env.CLOUDINARY_API_KEY,
+                // "cloudinaryPreset": process.env.CLOUDINARY_UPLOAD_PRESET
+            })
+        }
+    })
+
+
+})
+
+//UPDATE
+router.get('/:product_id/update', async (req, res) => {
+    const allBrands = await dataLayer.getBrands();
+    const allGenders = await dataLayer.getGenders();
+    const allColor = await dataLayer.getColors();
+    const allSize = await dataLayer.getSizes();
+    const allMaterials = await dataLayer.getAllMaterials();
+
+    //fetch shoe by Id
+    const shoeById = await dataLayer.getShoeById(req.params.product_id);
+
+    const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
+
+//CHECK HOW BRANDID.VALUE MATCH WITH CAOLAN FORMWIDGETS STORED FOR BRAND ID
+
+      // // fill in the existing values
+      productForm.fields.name.value = shoeById.get('name');
+      productForm.fields.description.value = shoeById.get('description');
+      productForm.fields.shoe_type.value = shoeById.get('shoe_type');
+      productForm.fields.brand_id.value = shoeById.get('brand_id');
+      productForm.fields.gender_id.value = shoeById.get('gender_id');
+      productForm.fields.color_id.value = shoeById.get('color_id');
+      productForm.fields.size_id.value = shoeById.get('size_id');
+      productForm.fields.image_url.value = shoeById.get('image_url');
+      productForm.fields.cost.value = shoeById.get('cost');
+      productForm.fields.stock.value = shoeById.get('stock');
+      productForm.fields.thumbnail_url.value = shoeById.get('thumbnail_url');
+      let selectedMaterials = await shoeById.related('materials').pluck('id');
+      productForm.fields.materials.value = selectedMaterials;
+
+    res.render("products/update", { //based on the folder "products" into create hbs
+        'form': productForm.toHTML(bootstrapField),
+        'shoe': shoeById.toJSON()
+
+    })
+
+
+
+})
+
+router.post('/:product_id/update', async (req,res)=>
+{
+    const allBrands = await dataLayer.getBrands();
+    const allGenders = await dataLayer.getGenders();
+    const allColor = await dataLayer.getColors();
+    const allSize = await dataLayer.getSizes();
+    const allMaterials = await dataLayer.getAllMaterials();
+
+    const shoeById = await dataLayer.getShoeById(req.params.product_id);
+
+    const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
+    productForm.handle(req, {
+        'success': async (form) => {
+            let { materials, ...productData } = form.data;
+            shoeById.set(productData);
+            shoeById.save();
+            //update tags
+            let materialIds = materials.split(',')
+            let existingMaterialIds = await shoeById.related('materials').pluck('id');
+
+            //Remove all the materials that aren't selected anyomre
+            let toRemove = existingMaterialIds.filter(id => materialIds.includes(id) === false);
+            await shoeById.materials().detach(toRemove);
+            await shoeById.materials().attach(materialIds);
+
+            res.redirect('/products');
+        }, 'empty': async function (form) {
+            // executed if the user just submit without any input
+            res.render('products/create', {
+                'form': form.toHTML(bootstrapField),
+                // "cloudinaryName": process.env.CLOUDINARY_NAME,
+                // "cloudinaryApiKey": process.env.CLOUDINARY_API_KEY,
+                // "cloudinaryPreset": process.env.CLOUDINARY_UPLOAD_PRESET
+            })
+        },
+        'error': async (form) => {
+            res.render('products/create', {
+                'form': form.toHTML(bootstrapField),
+                // "cloudinaryName": process.env.CLOUDINARY_NAME,
+                // "cloudinaryApiKey": process.env.CLOUDINARY_API_KEY,
+                // "cloudinaryPreset": process.env.CLOUDINARY_UPLOAD_PRESET
+            })
+        }
+    })
+})
+//UPDATE
+
+
 //based on the associated url which is https:xxxxx/product then /delete
 
-router.get('/delete', (req, res) => {
-    res.render("products/delete")//based on the folder "products" into create hbs
+//DELETE
+router.get('/:product_id/delete', async (req, res) => {
+    const shoeById = await dataLayer.getShoeById(req.params.product_id)
+    res.render("products/delete",{
+        'shoes': shoeById.toJSON()
+    })//based on the folder "products" into create hbs
 })
-router.get('/update', (req, res) => {
-    res.render("products/update")//based on the folder "products" into create hbs
+router.post('/:product_id/delete', async(req,res)=>
+{
+    const shoeById = await dataLayer.getShoeById(req.params.product_id)
+    
+    await shoeById.destroy();
+    res.redirect("/products")
 })
+
+//DELETE
+
+
 module.exports = router; // #3 export out the router
