@@ -15,6 +15,7 @@ app.set("view engine", "hbs");
 // static folder
 app.use(express.static("public"));
 
+// app.use(cors());
 // setup wax-on
 wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
@@ -66,11 +67,11 @@ const productRoutes = require('./routes/product');
 const orderRoutes =  require('./routes/order');
 const cartRoutes =  require('./routes/cart');
 const cloudinaryRoutes = require('./routes/cloudinary.js')
+const userRoutes = require('./routes/user')
 
 
 //to use later
 // const cloudinaryRoutes = require('./routes/cloudinary.js')
-// const userRoutes = require('./routes/users')
 // const checkoutRoutes = require('./routes/checkout')
 // routes, hbs have not setup yet
 async function main() {
@@ -79,6 +80,8 @@ async function main() {
     app.use("/orders", orderRoutes);
     app.use("/carts", cartRoutes);
     app.use('/cloudinary', cloudinaryRoutes);
+    app.use('/users', userRoutes);
+
     //set up a new url to access productRoutes object
     //via url https:xxxx/products  ---> the rest can
     //be able to view urls in the route objec which is productRoutes

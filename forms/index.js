@@ -137,8 +137,7 @@ const createProductForm = (brands, genders, colors, size, materials = []) => { /
     })
 };
 
-const createSearchForm = (brands, genders, colors, size, materials = []) => 
-{
+const createSearchForm = (brands, genders, colors, size, materials = []) => {
     return forms.create({
         'name': fields.string({
             // required: true,
@@ -229,5 +228,68 @@ const createSearchForm = (brands, genders, colors, size, materials = []) =>
 
 }
 
+const createRegistrationForm = () => {
+    return forms.create({
+        'username': fields.string({
+            required: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.maxlength(100)],
+        }),
+        'password': fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.maxlength(100)],
+        }),
+        'email': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.maxlength(200)],
+        }),
+        'confirm_password': fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.matchField('password')]
+        })
+    })
+}
 
-module.exports = { createProductForm, bootstrapField, createSearchForm };
+const createLoginForm = () => {
+    return forms.create({
+        'username': fields.string({
+            required: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.maxlength(100)],
+        }),
+        'password': fields.password({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            }
+        }),
+        'email': fields.string({
+            required: true,
+            errorAfterField: true,
+            cssClasses: {
+                label: ['form-label']
+            },
+            validators: [validators.email()]
+        })
+
+    })
+}
+
+module.exports = { createProductForm, bootstrapField, createSearchForm, createLoginForm, createRegistrationForm };
