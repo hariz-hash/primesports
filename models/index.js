@@ -56,4 +56,80 @@ const Material = bookshelf.model('Material', {
     }
 });
 
-module.exports = { Shoe, Brand, Gender, Color, Size, Material };
+//other tables ---------------------------------------------------
+
+const Status = bookshelf.model("Status", {
+    tableName: "order_statuses",
+    orders() {
+        return this.hasMany('Order')
+    }
+})
+
+
+const Role = bookshelf.model("Role", {
+    tableName: "roles",
+    user() {
+        return this.hasMany('User')
+    },
+})
+
+const User = bookshelf.model("User", {
+    tableName: "users",
+    role() {
+        return this.belongsTo('Role')
+    },
+    order() {
+        return this.hasMany('Order')
+
+    },
+    shoes() {
+        return this.belongsToMany('Shoe');//many to many
+    },
+    cartItems() {
+        return this.hasMany('CartItem');
+    }
+
+})
+
+const CartItem = bookshelf.model("CartItem",
+    {
+        tableName: 'cart_items',
+        user() {
+            return this.belongsTo('User')
+        },
+        shoe() {
+            return this.belongsTo('Shoe')
+        }
+    })
+
+
+const Order = bookshelf.model("Order", {
+    tableName: "orders",
+    user() {
+        return this.belongsTo('User')
+    },
+    status() {
+        return this.belongsTo('Status')
+    },
+    shoes() {
+        return this.belongsToMany('Shoe');//many to many
+    },
+    orderItems() {
+        return this.hasMany('OrderItem')
+
+    }
+    // relationship with order_items with variants
+    //many to many
+})
+
+const OrderItem = bookshelf.model('OrderItem', {
+    tableName: 'order_items',
+    shoe() {
+        return this.belongsTo('Shoe');
+    },
+    order() {
+        return this.belongsTo('Order');
+    }
+})
+
+module.exports = { Shoe, Brand, Gender, Color, Size, Material, User, Order, Role, Status, OrderItem, CartItem };
