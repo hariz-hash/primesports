@@ -1,16 +1,14 @@
-const {CartItem} = require('../models');
+const { CartItem } = require('../models');
 
 // based on the user id, we return all items in the cart
-const getCart = async (userId)=>
-{
-    return await CartItem.collection().where(
-        {
+const getCart = async (userId) => {
+    return await CartItem.collection()
+        .where({
             'user_id': userId
-        }
-    ).fetch({
-        require:false,
-        withRelated: ['user', 'shoe.color',' shoe.size','shoe.brand']
-    })
+        }).fetch({
+            require: false,
+            withRelated: ['user', 'shoe.brand', 'shoe.gender', 'shoe.color', 'shoe.size']
+        })
 }
 
 //check if a specific product exists in user's shopping cart
@@ -23,7 +21,7 @@ const getCartItemByUserAndShoe = async (userId, shoeId) => {
     });
 }
 // add item to the cart
-async  function createCartItem (userId, shoeId, quantity){
+async function createCartItem(userId, shoeId, quantity) {
     const cartItem = new CartItem({
         'user_id': userId,
         'shoe_id': shoeId,
@@ -60,5 +58,5 @@ module.exports =
     removeFromCart,
     getCartItemByUserAndShoe,
     updateQuantity
-    
+
 }

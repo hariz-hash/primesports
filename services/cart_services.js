@@ -2,6 +2,7 @@ const cartDataLayer = require('../dal/cart_items')
 const productDataLayer = require('../dal/products');
 
 async function getUserCart(userId) {
+    console.log("In the cart services " + userId)
     return await cartDataLayer.getCart(userId);
 }
 

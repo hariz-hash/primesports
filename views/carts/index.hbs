@@ -1,7 +1,29 @@
 {{#extends 'base'}}
 
 {{#block 'content'}}
-<h1>for CART!</h1>
+{{!-- <a href="/checkout/" class="btn btn-success btn-lg">Checkout</a> --}}
+
+<ul class="list-group">
+    {{#each cart}}
+    <li class="list-group-item">
+        <h4>Name: {{this.shoe.name}}</h4>
+        <h4>Brand: {{this.shoe.brand.brand}}</h4>
+        <h4>Size: {{this.shoe.size.size}}</h4>
+        <h4>Gender: {{this.shoe.gender.gender}}</h4>
+        <h4>Cost: {{this.shoe.cost}}</h4>
+        <h4>Quantity: {{this.quantity}}</h4>
+        <h4>Color: {{this.shoe.color.color}}</h4>
+        <form method="POST" action="/carts/{{this.shoe.id}}/update">
+            <input type="hidden" name="_csrf" value="{{../csrfToken}}" />
+            <h5>Quantity: <input type="text" value="{{this.quantity}}" name="newQty" style="width:50px" /></h5>
+            <input type="submit" value="Update Quantity" class="btn btn-primary btn-sm" />
+        </form>
+        <a href="/carts/{{this.shoe.id}}/remove" class="btn btn-danger btn-sm">Remove</a>
+    </li>
+    {{/each}}
+</ul>
+
+
 {{/block}}
 
 {{/extends}}

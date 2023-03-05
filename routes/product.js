@@ -4,11 +4,13 @@ const router = express.Router();
 const { Shoe, Brand, Gender, Color, Size, Material } = require('../models')
 const { bootstrapField, createProductForm, createSearchForm } = require('../forms');
 const dataLayer = require('../dal/products')
+const { checkIfAuthenticated } = require('../middlewares');
+
 //all of this will route out to render out hbs
 //either by using get / post and with an extended url example: /create
 
 
-router.get('/', async (req, res) => {
+router.get('/',checkIfAuthenticated, async (req, res) => {
 
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
@@ -83,11 +85,11 @@ createSearchForm
     //         'shoes': shoes.toJSON() //to loop and display in a table format on hbs
     //     })//look into product folder and find index
 })
-
+,
 //based on the associated url which is https:xxxxx/product/add
 
 //CREATE
-router.get('/create', async (req, res) => {
+router.get('/create',checkIfAuthenticated, async (req, res) => {
 
     //here we will get all the data from the tables
     const allBrands = await dataLayer.getBrands();
@@ -112,7 +114,7 @@ router.get('/create', async (req, res) => {
     })
 })
 
-router.post('/create', async (req, res) => {
+router.post('/create',checkIfAuthenticated, async (req, res) => {
 
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
@@ -158,7 +160,7 @@ router.post('/create', async (req, res) => {
 })
 
 //UPDATE
-router.get('/:product_id/update', async (req, res) => {
+router.get('/:product_id/update',checkIfAuthenticated, async (req, res) => {
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
     const allColor = await dataLayer.getColors();
@@ -199,7 +201,7 @@ router.get('/:product_id/update', async (req, res) => {
 
 })
 
-router.post('/:product_id/update', async (req,res)=>
+router.post('/:product_id/update',checkIfAuthenticated, async (req,res)=>
 {
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
@@ -250,13 +252,13 @@ router.post('/:product_id/update', async (req,res)=>
 //based on the associated url which is https:xxxxx/product then /delete
 
 //DELETE
-router.get('/:product_id/delete', async (req, res) => {
+router.get('/:product_id/delete',checkIfAuthenticated, async (req, res) => {
     const shoeById = await dataLayer.getShoeById(req.params.product_id)
     res.render("products/delete",{
         'shoes': shoeById.toJSON()
     })//based on the folder "products" into create hbs
 })
-router.post('/:product_id/delete', async(req,res)=>
+router.post('/:product_id/delete',checkIfAuthenticated, async(req,res)=>
 {
     const shoeById = await dataLayer.getShoeById(req.params.product_id)
     
