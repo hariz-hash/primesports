@@ -10,7 +10,7 @@ const { checkIfAuthenticated } = require('../middlewares');
 //either by using get / post and with an extended url example: /create
 
 
-router.get('/',checkIfAuthenticated, async (req, res) => {
+router.get('/', checkIfAuthenticated, async (req, res) => {
 
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
@@ -27,7 +27,7 @@ router.get('/',checkIfAuthenticated, async (req, res) => {
     const searchForm = createSearchForm(allBrands, allGenders, allColor, allSize, allMaterials);
     let q = Shoe.collection()
 
-    searchForm.handle(req,{
+    searchForm.handle(req, {
         'success': async (form) => {
             if (form.data.model) {
                 q.where('name', 'like', '%' + form.data.model + '%')
@@ -52,7 +52,7 @@ router.get('/',checkIfAuthenticated, async (req, res) => {
                 q.query('join', 'materials_shoes', 'shoes.id', 'shoe_id')
                     .where('material_id', 'in', form.data.materials.split(','))
             }
-            
+
             const products = await q.fetch({
                 withRelated: ['brand', 'color', 'size', 'gender', 'materials'] // for each product, load in each of the tag
             });
@@ -72,49 +72,49 @@ router.get('/',checkIfAuthenticated, async (req, res) => {
             })
         },
         'error': async (form) => {
-    
+
             res.render('products/index', {
                 'shoes': shoes.toJSON(),
                 'form': form.toHTML(bootstrapField)
             })
         },
-createSearchForm
+        createSearchForm
     })
     // res.render("products/index",
     //     {
     //         'shoes': shoes.toJSON() //to loop and display in a table format on hbs
     //     })//look into product folder and find index
 })
-,
-//based on the associated url which is https:xxxxx/product/add
+    ,
+    //based on the associated url which is https:xxxxx/product/add
 
-//CREATE
-router.get('/create',checkIfAuthenticated, async (req, res) => {
+    //CREATE
+    router.get('/create', checkIfAuthenticated, async (req, res) => {
 
-    //here we will get all the data from the tables
-    const allBrands = await dataLayer.getBrands();
-    const allGenders = await dataLayer.getGenders();
-    const allColor = await dataLayer.getColors();
-    const allSize = await dataLayer.getSizes();
-    const allMaterials = await dataLayer.getAllMaterials();
+        //here we will get all the data from the tables
+        const allBrands = await dataLayer.getBrands();
+        const allGenders = await dataLayer.getGenders();
+        const allColor = await dataLayer.getColors();
+        const allSize = await dataLayer.getSizes();
+        const allMaterials = await dataLayer.getAllMaterials();
 
 
-    // here we will call the caolon form to take the pass-in arguments and store in the
-    //widgets,
-    //the productForm will consist the the retur form to that variable
-    const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
+        // here we will call the caolon form to take the pass-in arguments and store in the
+        //widgets,
+        //the productForm will consist the the retur form to that variable
+        const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
 
-    res.render("products/create", { //based on the folder "products" into create hbs
-        'form': productForm.toHTML(bootstrapField),
-        'cloudinaryName': process.env.CLOUDINARY_NAME,
-        'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
-        'cloudinaryPreset': process.env.CLOUDINARY_UPLOAD_PRESETs
-        //here we convert caolon form with the pass in data
-        // into html form where the hbs will display them
+        res.render("products/create", { //based on the folder "products" into create hbs
+            'form': productForm.toHTML(bootstrapField),
+            'cloudinaryName': process.env.CLOUDINARY_NAME,
+            'cloudinaryApiKey': process.env.CLOUDINARY_API_KEY,
+            'cloudinaryPreset': process.env.CLOUDINARY_UPLOAD_PRESETs
+            //here we convert caolon form with the pass in data
+            // into html form where the hbs will display them
+        })
     })
-})
 
-router.post('/create',checkIfAuthenticated, async (req, res) => {
+router.post('/create', checkIfAuthenticated, async (req, res) => {
 
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
@@ -128,11 +128,11 @@ router.post('/create',checkIfAuthenticated, async (req, res) => {
         success: async (form) => {
             let { materials, ...productData } = form.data;
             const product = new Shoe();
-            console.log(materials)
+            // console.log(materials)
             await product.save(productData);
             if (materials) {
                 await product.materials().attach(materials.split(","));
-                console.log(materials.split(","))
+                // console.log(materials.split(","))
             }
             req.flash("success_messages", `New Product ${product.get('name')} has been created`)
             res.redirect('/products')
@@ -156,11 +156,10 @@ router.post('/create',checkIfAuthenticated, async (req, res) => {
         }
     })
 
-
 })
 
 //UPDATE
-router.get('/:product_id/update',checkIfAuthenticated, async (req, res) => {
+router.get('/:product_id/update', checkIfAuthenticated, async (req, res) => {
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
     const allColor = await dataLayer.getColors();
@@ -172,22 +171,22 @@ router.get('/:product_id/update',checkIfAuthenticated, async (req, res) => {
 
     const productForm = createProductForm(allBrands, allGenders, allColor, allSize, allMaterials);
 
-//CHECK HOW BRANDID.VALUE MATCH WITH CAOLAN FORMWIDGETS STORED FOR BRAND ID
+    //CHECK HOW BRANDID.VALUE MATCH WITH CAOLAN FORMWIDGETS STORED FOR BRAND ID
 
-      // // fill in the existing values
-      productForm.fields.name.value = shoeById.get('name');
-      productForm.fields.description.value = shoeById.get('description');
-      productForm.fields.shoe_type.value = shoeById.get('shoe_type');
-      productForm.fields.brand_id.value = shoeById.get('brand_id');
-      productForm.fields.gender_id.value = shoeById.get('gender_id');
-      productForm.fields.color_id.value = shoeById.get('color_id');
-      productForm.fields.size_id.value = shoeById.get('size_id');
-      productForm.fields.image_url.value = shoeById.get('image_url');
-      productForm.fields.cost.value = shoeById.get('cost');
-      productForm.fields.stock.value = shoeById.get('stock');
-      productForm.fields.thumbnail_url.value = shoeById.get('thumbnail_url');
-      let selectedMaterials = await shoeById.related('materials').pluck('id');
-      productForm.fields.materials.value = selectedMaterials;
+    // // fill in the existing values
+    productForm.fields.name.value = shoeById.get('name');
+    productForm.fields.description.value = shoeById.get('description');
+    productForm.fields.shoe_type.value = shoeById.get('shoe_type');
+    productForm.fields.brand_id.value = shoeById.get('brand_id');
+    productForm.fields.gender_id.value = shoeById.get('gender_id');
+    productForm.fields.color_id.value = shoeById.get('color_id');
+    productForm.fields.size_id.value = shoeById.get('size_id');
+    productForm.fields.image_url.value = shoeById.get('image_url');
+    productForm.fields.cost.value = shoeById.get('cost');
+    productForm.fields.stock.value = shoeById.get('stock');
+    productForm.fields.thumbnail_url.value = shoeById.get('thumbnail_url');
+    let selectedMaterials = await shoeById.related('materials').pluck('id');
+    productForm.fields.materials.value = selectedMaterials;
 
     res.render("products/update", { //based on the folder "products" into create hbs
         'form': productForm.toHTML(bootstrapField),
@@ -201,8 +200,7 @@ router.get('/:product_id/update',checkIfAuthenticated, async (req, res) => {
 
 })
 
-router.post('/:product_id/update',checkIfAuthenticated, async (req,res)=>
-{
+router.post('/:product_id/update', checkIfAuthenticated, async (req, res) => {
     const allBrands = await dataLayer.getBrands();
     const allGenders = await dataLayer.getGenders();
     const allColor = await dataLayer.getColors();
@@ -252,16 +250,15 @@ router.post('/:product_id/update',checkIfAuthenticated, async (req,res)=>
 //based on the associated url which is https:xxxxx/product then /delete
 
 //DELETE
-router.get('/:product_id/delete',checkIfAuthenticated, async (req, res) => {
+router.get('/:product_id/delete', checkIfAuthenticated, async (req, res) => {
     const shoeById = await dataLayer.getShoeById(req.params.product_id)
-    res.render("products/delete",{
+    res.render("products/delete", {
         'shoes': shoeById.toJSON()
     })//based on the folder "products" into create hbs
 })
-router.post('/:product_id/delete',checkIfAuthenticated, async(req,res)=>
-{
+router.post('/:product_id/delete', checkIfAuthenticated, async (req, res) => {
     const shoeById = await dataLayer.getShoeById(req.params.product_id)
-    
+
     await shoeById.destroy();
     res.redirect("/products")
 })

@@ -53,6 +53,17 @@ const getShoeById = async (shoeId) => {
         withRelated: ['brand', 'gender', 'color', 'size', 'materials']
     })
 }
+
+async function updateShoe(shoeId, data) {
+    const shoe = await getShoeById(shoeId);
+    if (!shoe) {
+        return;
+    }
+    shoe.set(data);
+    await shoe.save();
+    return true
+};
+
 module.exports = {
-    getBrands, getGenders, getColors, getSizes, getAllMaterials, fetchAllShoes, getShoeById, fetchWithRelatedShoes
+    getBrands, getGenders, getColors, getSizes, getAllMaterials, fetchAllShoes, getShoeById, fetchWithRelatedShoes, updateShoe
 }

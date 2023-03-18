@@ -10,7 +10,7 @@ const CartServices = require('../services/cart_services');
 //  #2 Add a new route to the Express router
 router.get('/', checkIfAuthenticated, async (req, res) => {
     let cart = await getUserCart(req.session.user.id)
-    console.log(cart.toJSON())
+    // console.log(cart.toJSON())
     res.render("carts/index",
         {
             'cart': cart.toJSON()
@@ -24,8 +24,8 @@ router.get('/:shoe_id/add', checkIfAuthenticated, async function (req, res) {
     const shoe_id = req.params.shoe_id;
     const quantity = req.body.quantity;
 
-    console.log(" Sho id " + shoe_id)
-    console.log(" User id " + userId)
+    // console.log(" Sho id " + shoe_id)
+    // console.log(" User id " + userId)
 
     await addToCart(userId, shoe_id, 1);
     req.flash("success_messages", "The item has been added");

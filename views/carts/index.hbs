@@ -2,6 +2,7 @@
 
 {{#block 'content'}}
 {{!-- <a href="/checkout/" class="btn btn-success btn-lg">Checkout</a> --}}
+<a href="/checkout/" class="btn btn-danger btn-sm">Checkout</a>
 
 <ul class="list-group">
     {{#each cart}}
@@ -19,6 +20,7 @@
             <input type="submit" value="Update Quantity" class="btn btn-primary btn-sm" />
         </form>
         <a href="/carts/{{this.shoe.id}}/remove" class="btn btn-danger btn-sm">Remove</a>
+
     </li>
     {{/each}}
 </ul>

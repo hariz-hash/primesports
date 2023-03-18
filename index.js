@@ -43,9 +43,23 @@ app.use(function (req, res, next) {
   res.locals.error_messages = req.flash("error_messages");
   next();
 });
-
 // enable CSRF
-app.use(csrf());
+// app.use(csrf());
+// note: replaced app.use(csrf()) with the following:
+const csurfInstance = csrf();
+app.use(function(req,res,next){
+  // console.log("checking for csrf exclusion")
+  // exclude whatever url we want from CSRF protection
+  if (req.url === "/checkout/process_payment") {
+    return next();
+  }
+  csurfInstance(req,res,next);
+})
+
+app.use(function(req,res,next){
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 // Share CSRF with hbs files
 app.use(function(req,res,next){
@@ -68,6 +82,7 @@ const orderRoutes =  require('./routes/order');
 const cartRoutes =  require('./routes/cart');
 const cloudinaryRoutes = require('./routes/cloudinary.js')
 const userRoutes = require('./routes/user')
+const checkoutRoutes = require('./routes/checkout')
 
 
 //to use later
@@ -81,6 +96,7 @@ async function main() {
     app.use("/carts", cartRoutes);
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/users', userRoutes);
+    app.use('/checkout', checkoutRoutes);
 
     //set up a new url to access productRoutes object
     //via url https:xxxx/products  ---> the rest can
