@@ -56,4 +56,4 @@ async function emptyOfCart(userId)
     }
 }
 
-module.exports = { getUserCart, addToCart, setQuantity, emptyOfCart, deleteFromCart }
+module.exports = { getUserCart, addToCart, setQuantity, emptyOfCart, deleteFromCart,checkStock }

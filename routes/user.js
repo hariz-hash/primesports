@@ -86,23 +86,25 @@ router.post('/login', async (req, res) => {
     })
 })
 
-// router.get('/profile',checkIfAuthenticated, (req, res) => {
-//     const user = req.session.user;
-//     if (!user) {
-//         req.flash('error_messages', 'You do not have permission to view this page');
-//         res.redirect('/users/login');
-//     } else {
-//         res.render('user/profile', {
-//             'user': user
-//         })
-//     }
+router.get('/profile',checkIfAuthenticated, (req, res) => {
+    const user = req.session.user;
+    if (!user) {
+        req.flash('error_messages', 'You do not have permission to view this page');
+        res.redirect('/users/login');
+    } else {
+        res.render('user/profile', {
+            'user': user
+        })
+    }
+
+})
 
 // })
-// router.get('/logout', (req, res) => {
-//     req.session.user = null;
-//     req.flash('success_messages', "Goodbye");
-//     res.redirect('/users/login');
-// })
+router.get('/logout', (req, res) => {
+    req.session.user = null;
+    req.flash('success_messages', "Goodbye");
+    res.redirect('/users/login');
+})
 const getHashedPassword = (password) => {
     const sha256 = crypto.createHash('sha256');
     const hash = sha256.update(password).digest('base64');

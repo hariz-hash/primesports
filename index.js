@@ -7,6 +7,8 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
 // create an instance of express app
+hbs.registerHelper('dateFormat', require('handlebars-dateformat'));
+
 let app = express();
 
 // set the view engine
@@ -83,12 +85,17 @@ const cartRoutes =  require('./routes/cart');
 const cloudinaryRoutes = require('./routes/cloudinary.js')
 const userRoutes = require('./routes/user')
 const checkoutRoutes = require('./routes/checkout')
-
+// const stripeRoutes = require('./routes/stripe')
 
 //to use later
 // const cloudinaryRoutes = require('./routes/cloudinary.js')
 // const checkoutRoutes = require('./routes/checkout')
 // routes, hbs have not setup yet
+
+app.use(function(req,res,next){
+  res.locals.user = req.session.user;
+  next();
+})
 async function main() {
     app.use('/', landingRoutes);
     app.use('/products', productRoutes);
@@ -97,6 +104,7 @@ async function main() {
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/users', userRoutes);
     app.use('/checkout', checkoutRoutes);
+    // app.use('/stripe',stripeRoutes)
 
     //set up a new url to access productRoutes object
     //via url https:xxxx/products  ---> the rest can

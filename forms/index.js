@@ -291,5 +291,50 @@ const createLoginForm = () => {
 
     })
 }
+const searchOrderForm = (status) => {
+    return forms.create({
 
-module.exports = { createProductForm, bootstrapField, createSearchForm, createLoginForm, createRegistrationForm };
+        'min_cost': fields.number({
+            label: 'min cost',
+            required: false,
+            errorAfterField: true,
+            validators: [validators.integer(), validators.min(0)]
+        }),
+        'max_cost': fields.number({
+            label: 'max cost',
+            required: false,
+            errorAfterField: true,
+            validators: [validators.integer(), validators.min(0)]
+        }),
+        'shipping_postal_code': fields.string({
+            label: 'Postal Code',
+            required: false,
+            errorAfterField: true,
+            validators: [validators.maxlength(20)]
+
+        }),
+        'order_status_id': fields.number({
+            label: 'Order status',
+            required: true,
+            errorAfterField: true,
+            choices: status,
+            widget: widgets.select()
+        })
+
+    })
+}
+
+const updateStatusForm = (status) => {
+    return forms.create({
+        'order_status_id': fields.string({
+            label: 'Order status',
+            required: true,
+            errorAfterField: true,
+            widget: widgets.select(),
+            choices: status,
+        })
+    })
+}
+
+
+module.exports = { createProductForm, bootstrapField, createSearchForm, createLoginForm, createRegistrationForm, searchOrderForm, updateStatusForm  };

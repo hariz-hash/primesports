@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     const cartItems = await cartServices.getUserCart(userId)
     // console.log(cartItems.toJSON())
     itemsInCart = cartItems.toJSON()
-    // console.log(itemsInCart);
+      console.log(itemsInCart);
     const lineItems = [];
     const meta = [];
 
@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
         }
 
         lineItems.push(lineItem);
-
+        console.log(lineItems);
         // record how many quantity has been purchased for this product id
 
         meta.push({
@@ -56,9 +56,9 @@ router.get('/', async (req, res) => {
     // change the meta array into a JSON string
     let metaData = JSON.stringify(meta);
     // console.log("THIS IS IN METADATA",metaData.toJSON());
-    // console.log("THIS IS IN METADATA",{metaData});
+    console.log("THIS IS IN METADATA", { metaData });
     const payment = {
-        payment_method_types: ['card', 'paynow'],
+        payment_method_types: ['card'],
         shipping_address_collection: {
             allowed_countries: ['SG']
         },
@@ -81,7 +81,7 @@ router.get('/', async (req, res) => {
         'sessionId': stripeSession.id,
         'publishableKey': process.env.STRIPE_PUBLISHABLE_KEY
     })
-console.log("inside before process payment")
+    console.log("inside before process payment")
 })
 
 router.post('/process_payment', express.raw({ type: 'application/json' }), async function (req, res) {
