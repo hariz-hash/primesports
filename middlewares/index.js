@@ -8,25 +8,25 @@ const checkIfAuthenticated = (req, res, next) => {
         res.redirect('/users/login');
     }
 }
-// const checkIfAuthenticatedJWT = (req, res, next) => {
-//     const authHeader = req.headers.authorization;
+const checkIfAuthenticatedJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
 
-//     if (authHeader) {
-//         const token = authHeader.split(' ')[1];
+    if (authHeader) {
+        const token = authHeader.split(' ')[1];
 
-//         jwt.verify(token, process.env.TOKEN_SECRET, (err, data) => {
-//             if (err) {
-//                 return res.sendStatus(403);
-//             }
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, data) => {
+            if (err) {
+                return res.sendStatus(403);
+            }
 
-//             req.user = data;
-//             next();
-//         });
-//     } else {
-//         res.sendStatus(401);
-//     }
-// };
+            req.user = data;
+            next();
+        });
+    } else {
+        res.sendStatus(401);
+    }
+};
 
 module.exports = {
-    checkIfAuthenticated
+    checkIfAuthenticated, checkIfAuthenticatedJWT
 }

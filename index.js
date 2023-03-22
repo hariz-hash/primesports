@@ -6,6 +6,8 @@ require("dotenv").config();
 const session = require('express-session');
 const flash = require('connect-flash');
 const FileStore = require('session-file-store')(session);
+const cors = require('cors')
+
 // create an instance of express app
 hbs.registerHelper('dateFormat', require('handlebars-dateformat'));
 
@@ -52,7 +54,7 @@ const csurfInstance = csrf();
 app.use(function(req,res,next){
   // console.log("checking for csrf exclusion")
   // exclude whatever url we want from CSRF protection
-  if (req.url === "/checkout/process_payment") {
+  if (req.url === "/checkout/process_payment" || req.url.slice(0, 5) == '/api/') {
     return next();
   }
   csurfInstance(req,res,next);
@@ -77,6 +79,13 @@ app.use(function (err, req, res, next) {
       next()
   }
 });
+
+const api ={
+  product: require('./routes/api/product'),
+  user: require('./routes/api/user'),
+  cart: require('./routes/api/cart'),
+  checkout: require('./routes/api/checkout')
+}
 
 const landingRoutes = require('./routes/landing');
 const productRoutes = require('./routes/product');
@@ -104,6 +113,11 @@ async function main() {
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/users', userRoutes);
     app.use('/checkout', checkoutRoutes);
+    // app.use('/api/product',express.json(), api.product)
+    // app.use('/api/user',express.json(), api.user);
+    // app.use('/api/cart',express.json(), api.cart);
+    // app.use('/api/checkout', api.checkout);
+
     // app.use('/stripe',stripeRoutes)
 
     //set up a new url to access productRoutes object

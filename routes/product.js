@@ -1,5 +1,5 @@
 const express = require("express");
-const async = require("hbs/lib/async");
+// const async = require("hbs/lib/async");
 const router = express.Router();
 const { Shoe, Brand, Gender, Color, Size, Material } = require('../models')
 const { bootstrapField, createProductForm, createSearchForm } = require('../forms');
