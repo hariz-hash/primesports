@@ -1,5 +1,6 @@
 const async = require('hbs/lib/async');
 const { Shoe, Brand, Gender, Color, Size, Material } = require('../models');
+const { search } = require('../routes/landing');
 
 
 const getBrands = async () => {
@@ -45,7 +46,7 @@ const fetchWithRelatedShoes = async () => {
 
 }
 
-const getShoeById = async (shoeId) => {
+async function getShoeById(shoeId) {
     return await Shoe.where({
         'id': shoeId
     }).fetch({
@@ -64,6 +65,52 @@ async function updateShoe(shoeId, data) {
     return true
 };
 
+const searchShoes = async (search) =>
+{
+    let query = Shoe.collection();
+
+    if (search.model) {
+		// MySQL syntax (case insensitive by default)
+		if (process.env.DB_DRIVER == 'mysql') {
+			query.where('name', 'like', `%${search.model}%`);
+		} else {
+			query.where('name', 'ilike', `%${search.model}%`);
+		}
+	}
+    if (search.shoeType) {
+		// MySQL syntax (case insensitive by default)
+		if (process.env.DB_DRIVER == 'mysql') {
+			query.where('shoe_type', 'like', `%${search.shoeType}%`);
+		} else {
+			query.where('shoe_type', 'ilike', `%${search.shoeType}%`);
+		}
+	}
+    if (search.brand_id && search.brand_id != 0) {
+		query.where('brand_id', '=', search.brand_id);
+	}
+
+    if (search.gender_id && search.gender_id != 0) {
+		query.where('gender_id', '=', search.gender_id);
+	}
+    if (search.brand_id && search.brand_id != 0) {
+		query.where('brand_id', '=', search.brand_id);
+	}
+
+    if (search.materials && search.materials != 0) {
+        // ...JOIN products_tags ON products.id = products_tags.product_id
+        query.query('join', 'materials_shoes', 'shoes.id', 'shoe_id')
+            .where('material_id', 'in', search.materials.split(','))
+    }
+
+    const searchShoes = (await query.fetch({
+        withRelated:['gender', 'brand', 'materials'] // for each product, load in each of the tag
+    })).toJSON();
+    return searchShoes;
+    
+
+
+}
+
 module.exports = {
-    getBrands, getGenders, getColors, getSizes, getAllMaterials, fetchAllShoes, getShoeById, fetchWithRelatedShoes, updateShoe
+    getBrands, getGenders, getColors, getSizes, getAllMaterials, fetchAllShoes, getShoeById, fetchWithRelatedShoes, updateShoe, searchShoes
 }

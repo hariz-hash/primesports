@@ -1,4 +1,4 @@
-// const jwt = require('jsonwebtoken');
+ const jwt = require('jsonwebtoken');
 
 const checkIfAuthenticated = (req, res, next) => {
     if (req.session.user) {

@@ -113,10 +113,10 @@ async function main() {
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/users', userRoutes);
     app.use('/checkout', checkoutRoutes);
-    // app.use('/api/product',express.json(), api.product)
-    // app.use('/api/user',express.json(), api.user);
-    // app.use('/api/cart',express.json(), api.cart);
-    // app.use('/api/checkout', api.checkout);
+    app.use('/api/product',express.json(), api.product)
+    app.use('/api/cart',express.json(), api.cart)
+    app.use('/api/user',express.json(), api.user);
+    app.use('/api/checkout', api.checkout);
 
     // app.use('/stripe',stripeRoutes)
 
