@@ -64,62 +64,63 @@ async function updateShoe(shoeId, data) {
     return true
 };
 
-const searchShoes = async (search) =>
-{
+
+//
+const searchShoes = async (search) => {
     let query = Shoe.collection()
     console.log(search)
     if (search.name) {
-		// MySQL syntax (case insensitive by default)
-		if (process.env.DB_DRIVER == 'mysql') {
-			query.where('name', 'like', `%${search.name}%`);
-		} else {
-			query.where('name', 'ilike', `%${search.name}%`);
-		}
-	}
+        // MySQL syntax (case insensitive by default)
+        if (process.env.DB_DRIVER == 'mysql') {
+            query.where('name', 'like', `%${search.name}%`);
+        } else {
+            query.where('name', 'ilike', `%${search.name}%`);
+        }
+    }
 
     if (search.shoeType) {
-		// MySQL syntax (case insensitive by default)
-		if (process.env.DB_DRIVER == 'mysql') {
-			query.where('shoe_type', 'like', `%${search.shoeType}%`);
-		} else {
-			query.where('shoe_type', 'ilike', `%${search.shoeType}%`);
-		}
-	}
-    // if (search.brand_id && search.brand_id != 0) {
-	// 	query.where('brand_id', '=', search.brand_id);
-	// }
-
-    // if (search.gender_id && search.gender_id != 0) {
-	// 	query.where('gender_id', '=', search.gender_id);
-	// }
-
-    // if (search.color_id && search.color_id != 0) {
-	// 	query.where('color_id', '=', search.color_id);
-	// }
-
-    // if (search.size_id && search.size_id != 0) {
-	// 	query.where('size_id', '=', search.size_id);
-	// }
-
+        // MySQL syntax (case insensitive by default)
+        if (process.env.DB_DRIVER == 'mysql') {
+            query.where('shoe_type', 'like', `%${search.shoeType}%`);
+        } else {
+            query.where('shoe_type', 'ilike', `%${search.shoeType}%`);
+        }
+    }
     if (search.brand_id && search.brand_id != 0) {
-		query.where('brand_id', '=', search.brand_id);
-	}
+        query.where('brand_id', '=', search.brand_id);
+    }
 
     if (search.gender_id && search.gender_id != 0) {
-		query.where('gender_id', '=', search.gender_id);
-	}
-    if (search.brand_id && search.brand_id != 0) {
-		query.where('brand_id', '=', search.brand_id);
-	}
+        query.where('gender_id', '=', search.gender_id);
+    }
 
-    // if (search.materials && search.materials != 0) {
-    //     // ...JOIN products_tags ON products.id = products_tags.product_id
-    //     query.query('join', 'materials_shoes', 'shoes.id', 'shoe_id')
-    //         .where('material_id', 'in', search.materials.split(','))
-    // }
+    if (search.color_id && search.color_id != 0) {
+        query.where('color_id', '=', search.color_id);
+    }
 
-    const searchShoes = (await query.fetch({withRelated:['gender', 'brand', 'materials']})).toJSON();
-    return searchShoes;}
+    if (search.size_id && search.size_id != 0) {
+        query.where('size_id', '=', search.size_id);
+    }
+
+    if (search.materials && search.materials != 0) {
+        // ...JOIN products_tags ON products.id = products_tags.product_id
+        query.query('join', 'materials_shoes', 'shoes.id', 'shoe_id')
+            .where('material_id', 'in', search.materials.split(','))
+    }
+    if (search.min_cost) {
+        query.where('cost', '>=', search.min_cost)
+    }
+    
+    if(search.max_cost){
+        query.where('cost', '<=', search.max_cost)
+    }
+    const searchShoes = (await query.fetch({
+        withRelated: ['gender', 'brand', 'materials', 'color', 'size'] // for each product, load in each of the tag
+    })).toJSON();
+    // const searchShoes = (await query.fetch({withRelated:['gender', 'brand', 'materials']})).toJSON();
+    return searchShoes;
+}
+
 
 
 module.exports = {

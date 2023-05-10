@@ -19,7 +19,7 @@ app.set("view engine", "hbs");
 // static folder
 app.use(express.static("public"));
 
-// app.use(cors());
+app.use(cors());
 // setup wax-on
 wax.on(hbs.handlebars);
 wax.setLayoutPath("./views/layouts");
@@ -60,10 +60,10 @@ app.use(function(req,res,next){
   csurfInstance(req,res,next);
 })
 
-app.use(function(req,res,next){
-  res.locals.csrfToken = req.csrfToken();
-  next();
-})
+// app.use(function(req,res,next){
+//   res.locals.csrfToken = req.csrfToken();
+//   next();
+// })
 
 // Share CSRF with hbs files
 app.use(function(req,res,next){
